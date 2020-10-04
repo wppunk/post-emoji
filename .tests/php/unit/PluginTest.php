@@ -23,6 +23,11 @@ use Emoji\Plugin;
  */
 class PluginTest extends TestCase {
 
+	/**
+	 * Test run
+	 *
+	 * @throws \Exception Invalid service name.
+	 */
 	public function test_run() {
 		$front = Mockery::mock( '\Emoji\Front' );
 		$front
