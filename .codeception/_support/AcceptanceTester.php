@@ -2,11 +2,11 @@
 /**
  * Actor for acceptance tests
  *
- * @since   {VERSION}
- * @link    {URL}
+ * @since   1.0.0
+ * @link    https://github.com/wppunk/emoji/
  * @license GPLv2 or later
  * @package PluginName
- * @author  {AUTHOR}
+ * @author  WPPunk
  */
 
 use Codeception\Actor;
@@ -15,7 +15,7 @@ use Codeception\Actor;
 /**
  * Inherited Methods
  *
- * @since {VERSION}
+ * @since 1.0.0
  *
  * @method void wantToTest( $text )
  * @method void wantTo( $text )

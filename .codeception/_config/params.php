@@ -5,11 +5,11 @@
  * Don't modify this file directly.
  * Create and use 'params.local.php' instead.
  *
- * @since   {VERSION}
- * @link    {URL}
+ * @since   1.0.0
+ * @link    https://github.com/wppunk/emoji/
  * @license GPLv2 or later
  * @package PluginName
- * @author  {AUTHOR}
+ * @author  WPPunk
  */
 
 global $argv;

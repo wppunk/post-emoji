@@ -2,11 +2,11 @@
 /**
  * GH Actions parameters
  *
- * @since   {VERSION}
- * @link    {URL}
+ * @since   1.0.0
+ * @link    https://github.com/wppunk/emoji/
  * @license GPLv2 or later
  * @package PluginName
- * @author  {AUTHOR}
+ * @author  WPPunk
  */
 
 return [

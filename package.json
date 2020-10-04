@@ -1,8 +1,8 @@
 {
-	"name": "plugin-name",
-	"version": "{VERSION}",
-	"repository": "{URL}",
-	"author": "{AUTHOR} <{AUTHOR_URL}>",
+	"name": "emoji",
+	"version": "1.0.0",
+	"repository": "https://github.com/wppunk/emoji/",
+	"author": "WPPunk <{AUTHOR_URL}>",
 	"license": "MIT",
 	"dependencies": {},
 	"devDependencies": {

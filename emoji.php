@@ -7,6 +7,7 @@
  * Description:         The plugin adds information about the games to the site posts.
  * Version:             1.0.0
  * Author:              WP Punk
+ * Author URI:          https://profiles.wordpress.org/wppunk/
  * Text Domain:         emoji
  * @link                https://github.com/wppunk/emoji
  * @package             Emoji
@@ -28,7 +29,7 @@ if ( version_compare( phpversion(), '5.6', '<' ) ) {
 	/**
 	 * Display the notice after deactivation.
 	 *
-	 * @since {VERSION}
+	 * @since 1.0.0
 	 */
 	function emoji_php_notice() {
 		?>
@@ -52,7 +53,7 @@ if ( version_compare( phpversion(), '5.6', '<' ) ) {
 		}
 	}
 
-	add_action( 'admin_notices', 'plugin_name_php_notice' );
+	add_action( 'admin_notices', 'emoji_php_notice' );
 
 	// Don't process the plugin code further.
 	return;

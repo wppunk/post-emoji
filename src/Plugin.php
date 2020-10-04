@@ -3,10 +3,10 @@
  * Plugin
  *
  * @since   1.0.0
- * @link    {URL}
+ * @link    https://github.com/wppunk/emoji/
  * @license GPLv2 or later
  * @package Emoji
- * @author  {AUTHOR}
+ * @author  WPPunk
  */
 
 namespace Emoji;

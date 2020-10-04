@@ -3,14 +3,14 @@
 /**
  * Class Vote.
  *
- * @since {VERSION}
+ * @since 1.0.0
  */
 export class Vote {
 
 	/**
 	 * Settings constructor.
 	 *
-	 * @since {VERSION}
+	 * @since 1.0.0
 	 */
 	constructor( emotion ) {
 		const emojiContainer = document.getElementsByClassName( 'emoji-container' )[ 0 ],

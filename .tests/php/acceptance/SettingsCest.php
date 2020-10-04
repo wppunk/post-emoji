@@ -2,11 +2,11 @@
 /**
  * SettingsCest
  *
- * @since   {VERSION}
- * @link    {URL}
+ * @since   1.0.0
+ * @link    https://github.com/wppunk/emoji/
  * @license GPLv2 or later
  * @package PluginName
- * @author  {AUTHOR}
+ * @author  WPPunk
  */
 
 /**
@@ -14,14 +14,14 @@
  *
  * phpcs:ignoreFile WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
  *
- * @since {VERSION}
+ * @since 1.0.0
  */
 class SettingsCest {
 
 	/**
 	 * Check a Settings Page
 	 *
-	 * @since        {VERSION}
+	 * @since        1.0.0
 	 *
 	 * @param \AcceptanceTester $I Actor.
 	 *

@@ -2,11 +2,11 @@
 /**
  * PluginTest
  *
- * @since   {VERSION}
- * @link    {URL}
+ * @since   1.0.0
+ * @link    https://github.com/wppunk/emoji/
  * @license GPLv2 or later
  * @package PluginName
- * @author  {AUTHOR}
+ * @author  WPPunk
  */
 
 namespace EmojiTests;
@@ -17,7 +17,7 @@ use Emoji\Plugin;
 /**
  * Class FrontTest
  *
- * @since   {VERSION}
+ * @since   1.0.0
  *
  * @package PluginNameUnitTests\Front
  */
