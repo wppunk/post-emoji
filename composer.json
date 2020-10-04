@@ -1,0 +1,72 @@
+{
+	"name": "wppunk/emoji",
+	"description": "Add emoji to your posts",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "WPPunk",
+			"email": "i@wp-punk.com"
+		}
+	],
+	"config": {
+		"platform": {
+			"php": "5.6"
+		}
+	},
+	"require": {
+	},
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^2.3",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+		"phpcompatibility/php-compatibility": "^9.3.5",
+		"codeception/codeception": "^4.1.7",
+		"codeception/module-asserts": "^1.3.0",
+		"codeception/module-db": "^1.0.1",
+		"codeception/module-webdriver": "^1.1.1",
+		"brain/monkey": "^2.4",
+		"brainmaestro/composer-git-hooks": "^2.8.3",
+		"lucatume/wp-browser": "^2.6.10",
+		"bamarni/composer-bin-plugin": "^1.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"Emoji\\": "src/",
+			"Emoji\\Dependencies\\": "dependencies/psr/"
+		},
+		"classmap": [
+			"dependencies/vendor/"
+		],
+		"files": [
+			"functions.php"
+		]
+	},
+	"extra": {
+		"phpcodesniffer-search-depth": 1,
+		"hooks": {
+			"pre-push": [
+				"composer cs"
+			]
+		}
+	},
+	"scripts": {
+		"acceptance": "codecept run acceptance -c .codeception.yml",
+		"unit": "codecept run unit -c .codeception.yml",
+		"cs": "phpcs --standard=.phpcs.xml .",
+		"install-scoper": [
+			"composer bin php-scoper config minimum-stability dev",
+			"composer bin php-scoper config prefer-stable true",
+			"composer bin php-scoper require --dev humbug/php-scoper"
+		],
+		"scoper": "php-scoper add-prefix --config .scoper.inc.php --output-dir dependencies/vendor/",
+		"post-install-cmd": [
+			"composer install-scoper",
+			"composer scoper",
+			"composer dump-autoload"
+		],
+		"post-update-cmd": [
+			"composer install-scoper",
+			"composer scoper",
+			"composer dump-autoload"
+		]
+	}
+}

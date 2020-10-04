@@ -1,0 +1,52 @@
+.emoji-container {
+	width: 730px;
+	max-width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	margin-left: -1rem;
+	margin-right: -1rem;
+	margin-top: 3rem;
+
+	&.disabled .emoji-emotion-icon {
+		filter: grayscale(1);
+	}
+
+	.emoji-emotion {
+		display: flex;
+		align-items: center;
+		flex: 0 0 16.6667%;
+		margin: 0 0 1rem;
+		padding: 0 1rem;
+
+		&-icon {
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: 100%;
+			max-width: 100%;
+			width: 60px;
+			height: 60px;
+		}
+
+		&-label {
+			font-size: 2rem;
+			margin-left: .5rem;
+			font-weight: bold;
+			color: #777;
+		}
+
+		&.active {
+			.emoji-emotion-icon {
+				transform: translateY(-10px);
+			}
+
+			.emoji-emotion-label {
+				color: #333;
+			}
+		}
+
+		@media (max-width: 767px) {
+			flex: 0 0 50%;
+		}
+	}
+}

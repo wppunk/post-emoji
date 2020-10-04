@@ -1,0 +1,145 @@
+name: PluginName GitHub Actions
+
+on: [push]
+
+jobs:
+    build:
+
+        strategy:
+            matrix:
+                php-versions: [7.4]
+
+        runs-on: ubuntu-latest
+
+        env:
+            php-ext-cache-key: cache-v1 # can be any string, change to clear the extension cache.
+            php-extensions: mysql
+            php-ini-values: post_max_size=256M
+            wp-directory: wordpress
+            wp-plugins-directory: wordpress/wp-content/plugins
+            DB_HOST: 127.0.0.1
+            DB_TABLE_PREFIX: wp_
+            DB_NAME: test_db
+            DB_USER: user
+            DB_PASSWORD: passw0rd
+            WP_URL: http://emoji.test
+            WP_DOMAIN: emoji.test
+            WP_ADMIN_USERNAME: admin
+            WP_ADMIN_PASSWORD: admin
+            WP_ADMIN_EMAIL: admin@emoji.test
+
+        services:
+            mysql:
+                image: mysql:5.6
+                env:
+                    MYSQL_USER: ${{ env.DB_USER }}
+                    MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
+                    MYSQL_DATABASE: ${{ env.DB_NAME }}
+                    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+                ports:
+                    - 3306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        steps:
+            -   name: Download Plugin
+                uses: actions/checkout@v2
+                with:
+                    path: ${{ env.wp-plugins-directory }}
+
+            -   name: Validate composer.json and composer.lock
+                working-directory: ${{ env.wp-plugins-directory }}
+                run: composer validate
+
+            -   name: Install dependencies
+                working-directory: ${{ env.wp-plugins-directory }}
+                run: |
+                    composer install
+                    yarn install
+
+            -   name: Validate Coding Standard
+                working-directory: ${{ env.wp-plugins-directory }}
+                run: |
+                    composer cs
+                    yarn cs
+
+            -   name: Run unit tests
+                working-directory: ${{ env.wp-plugins-directory }}
+                run: |
+                    composer unit
+                    yarn unit
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    tools: pecl
+                    php-version: ${{ matrix.php-versions }}
+                    extensions: ${{ env.php-extensions }}
+                    ini-values: ${{ env.php-ini-values }}
+                env:
+                    update: true
+
+            -   name: Install WP CLI
+                run: |
+                    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+                    chmod +x wp-cli.phar
+                    mkdir -p wp-cli
+                    sudo mv wp-cli.phar wp-cli/wp
+                    echo "::add-path::$GITHUB_WORKSPACE/wp-cli"
+                    echo -n "apache_modules:\n  - mod_rewrite" > "${{ env.wp-directory }}/wp-cli.yml"
+
+            -   name: Install WP
+                working-directory: ${{ env.wp-directory }}
+                run: |
+                    wp core download --version=5.5
+                    wp config create --dbname="${{ env.DB_NAME }}" --dbuser="${{ env.DB_USER }}" --dbpass="${{ env.DB_PASSWORD }}" --dbhost="${{ env.DB_HOST }}" --dbprefix="${{ env.DB_TABLE_PREFIX }}"
+                    wp core install --url="${{ env.WP_URL }}" --title="Test" --admin_user="${{ env.WP_ADMIN_USERNAME }}" --admin_password="${{ env.WP_ADMIN_PASSWORD }}" --admin_email="${{ env.WP_ADMIN_EMAIL }}" --skip-email
+                    wp rewrite structure '/%postname%/' --hard
+                    wp plugin activate --all
+
+            -   name: Make a DB dump for Codeception
+                working-directory: ${{ env.wp-plugins-directory }}
+                run: mysqldump --host="${{ env.DB_HOST }}" --user="${{ env.DB_USER }}" --password="${{ env.DB_PASSWORD }}" ${{ env.DB_NAME }} > .codeception/_data/dump.sql
+
+            -   name: Setup hosts
+                run: |
+                    echo ${{ env.DB_HOST }} ${{ env.WP_DOMAIN }} | sudo tee -a /etc/hosts
+                    cat /etc/hosts
+
+            -   name: Install & configure Apache
+                run: |
+                    sudo add-apt-repository ppa:ondrej/php
+                    sudo apt-get update
+                    sudo apt-get install apache2 libapache2-mod-php7.4
+                    mkdir -p logs
+                    sudo cp ${{ env.wp-plugins-directory }}/.github/workflows/emoji.conf /etc/apache2/sites-available/emoji.conf
+                    sudo a2enmod headers
+                    sudo a2enmod rewrite
+                    sudo a2ensite emoji
+                    sudo service apache2 restart
+
+            -   name: Setup Chromedriver
+                uses: nanasess/setup-chromedriver@master
+
+            -   name: Run Chromedriver
+                run: |
+                    export DISPLAY=:99
+                    chromedriver --url-base=/wd/hub &
+                    sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+
+            -   name: Run Acceptance Tests
+                working-directory: ${{ env.wp-plugins-directory }}
+                run: composer acceptance -- --env github-actions
+
+            -   name: Archive Codeception output
+                uses: actions/upload-artifact@v1
+                if: failure()
+                with:
+                    name: codeception-output
+                    path: ${{ env.wp-plugins-directory }}/.codeception/_output
+
+            -   name: Archive Apache Logs
+                uses: actions/upload-artifact@v1
+                if: failure()
+                with:
+                    name: apache-logs
+                    path: logs
