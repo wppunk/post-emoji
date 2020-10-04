@@ -1,7 +1,7 @@
-=== Shipping Nova Poshta for WooCommerce ===
+=== Emoji ===
 Contributors: wppunk
 Donate link: Fill ( https://your-donate.link )
-Tags: TODO:Fill ( tag1, tag2, tag3 )
+Tags: emoji, posts vote, эмоции, голосование
 Requires at least: 5.5
 Tested up to: 5.5
 Stable tag: 1.0.0
