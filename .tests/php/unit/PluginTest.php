@@ -9,12 +9,10 @@
  * @author  {AUTHOR}
  */
 
-namespace PluginNameUnitTests;
+namespace EmojiTests;
 
-use PluginName\Plugin;
-use PluginNameTests\TestCase;
-
-use function Brain\Monkey\Functions\expect;
+use Mockery;
+use Emoji\Plugin;
 
 /**
  * Class FrontTest
@@ -25,53 +23,38 @@ use function Brain\Monkey\Functions\expect;
  */
 class PluginTest extends TestCase {
 
-	/**
-	 * Test for adding hooks
-	 *
-	 * @since {VERSION}
-	 */
-	public function test_run_admin() {
-		expect( 'is_admin' )
-			->withNoArgs()
-			->once()
-			->andReturn( true );
-		$settings = \Mockery::mock( '\PluginName\Admin\Settings' );
-		$settings
-			->shouldReceive( 'hooks' )
-			->withNoArgs()
-			->once();
-		$container_builder = \Mockery::mock( '\PluginName\Vendor\Symfony\Component\DependencyInjection\ContainerBuilder' );
-		$container_builder
-			->shouldReceive( 'get' )
-			->with( 'settings' )
-			->once()
-			->andReturn( $settings );
-		$plugin = new Plugin( $container_builder );
-
-		$plugin->run();
-	}
-
-	/**
-	 * Test for adding hooks
-	 *
-	 * @since {VERSION}
-	 */
-	public function test_run_front() {
-		expect( 'is_admin' )
-			->withNoArgs()
-			->once()
-			->andReturn( false );
-		$front = \Mockery::mock( '\PluginName\Front\Front' );
+	public function test_run() {
+		$front = Mockery::mock( '\Emoji\Front' );
 		$front
 			->shouldReceive( 'hooks' )
 			->withNoArgs()
 			->once();
-		$container_builder = \Mockery::mock( '\PluginName\Vendor\Symfony\Component\DependencyInjection\ContainerBuilder' );
+		$admin = Mockery::mock( '\Emoji\Admin' );
+		$admin
+			->shouldReceive( 'hooks' )
+			->withNoArgs()
+			->once();
+		$shortcode = Mockery::mock( '\Emoji\Shortcode' );
+		$shortcode
+			->shouldReceive( 'register' )
+			->withNoArgs()
+			->once();
+		$container_builder = Mockery::mock( '\Emoji\Vendor\Symfony\Component\DependencyInjection\ContainerBuilder' );
 		$container_builder
 			->shouldReceive( 'get' )
 			->with( 'front' )
 			->once()
 			->andReturn( $front );
+		$container_builder
+			->shouldReceive( 'get' )
+			->with( 'admin' )
+			->once()
+			->andReturn( $admin );
+		$container_builder
+			->shouldReceive( 'get' )
+			->with( 'shortcode' )
+			->once()
+			->andReturn( $shortcode );
 		$plugin = new Plugin( $container_builder );
 
 		$plugin->run();

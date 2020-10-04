@@ -9,7 +9,7 @@
  * @author  {AUTHOR}
  */
 
-define( 'PLUGIN_NAME_DEBUG', true );
-define( 'PLUGIN_NAME_PATH', realpath( __DIR__ . '/../../../' ) . '/' );
-define( 'ABSPATH', realpath( PLUGIN_NAME_PATH . '../../' ) . '/' );
-define( 'PLUGIN_NAME_URL', 'https://site.com/wp-content/plugins/plugin-name/' );
+define( 'EMOJI_DEBUG', true );
+define( 'EMOJI_PATH', realpath( __DIR__ . '/../../../' ) . '/' );
+define( 'ABSPATH', realpath( EMOJI_PATH . '../../' ) . '/' );
+define( 'EMOJI_URL', 'https://site.com/wp-content/plugins/plugin-name/' );
