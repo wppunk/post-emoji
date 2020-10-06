@@ -59,16 +59,6 @@
 			"composer bin php-scoper config prefer-stable true",
 			"composer bin php-scoper require --dev humbug/php-scoper"
 		],
-		"scoper": "php-scoper add-prefix --config .scoper.inc.php --output-dir dependencies/vendor/",
-		"post-install-cmd": [
-			"composer install-scoper",
-			"composer scoper",
-			"composer dump-autoload"
-		],
-		"post-update-cmd": [
-			"composer install-scoper",
-			"composer scoper",
-			"composer dump-autoload"
-		]
+		"scoper": "php-scoper add-prefix --config .scoper.inc.php --output-dir dependencies/vendor/"
 	}
 }

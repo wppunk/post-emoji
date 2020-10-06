@@ -3,12 +3,12 @@
  * Bootstrap file
  *
  * @wordpress-plugin
- * Plugin Name:         Emoji
+ * Plugin Name:         Post emoji
  * Description:         The plugin adds information about the games to the site posts.
  * Version:             1.0.0
  * Author:              WP Punk
  * Author URI:          https://profiles.wordpress.org/wppunk/
- * Text Domain:         emoji
+ * Text Domain:         post-emoji
  * @link                https://github.com/wppunk/emoji
  * @package             Emoji
  */
