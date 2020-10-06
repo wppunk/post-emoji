@@ -86,7 +86,7 @@ export class Vote {
 		poop.classList.add( 'active' );
 		poopCounter.textContent = 1;
 
-		new Audio( '/wp-content/plugins/emoji/assets/audio/farting-' + audio + '.mp3' ).play();
+		new Audio( '/wp-content/plugins/emoji/assets/build/audio/farting-' + audio + '.mp3' ).play();
 		setTimeout( function() {
 			poop.classList.remove( 'active' );
 			poopCounter.textContent = 0;

@@ -50,7 +50,8 @@ class Plugin {
 	 */
 	public function run() {
 		( $this->container_builder->get( 'shortcode' ) )->register();
-		is_admin() ? ( $this->container_builder->get( 'admin' ) )->hooks() : ( $this->container_builder->get( 'front' ) )->hooks();
+		( $this->container_builder->get( 'admin' ) )->hooks();
+		( $this->container_builder->get( 'front' ) )->hooks();
 	}
 
 	/**

@@ -37,7 +37,7 @@ if ( version_compare( phpversion(), '5.6', '<' ) ) {
 			<p>
 				<?php
 				echo wp_kses(
-					__( 'The minimum version of PHP is <strong>5.6</strong>. Please update the PHP on your server and try again.', 'emoji' ),
+					__( 'The minimum version of PHP is <strong>5.6</strong>. Please update the PHP on your server and try again.', 'post-emoji' ),
 					[
 						'strong' => [],
 					]

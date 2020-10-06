@@ -80,7 +80,7 @@ class Admin {
 	 * @return array
 	 */
 	public function register_columns( $columns ) {
-		$columns['emoji'] = esc_html__( 'Emoji', 'emoji' );
+		$columns['emoji'] = esc_html__( 'Emoji', 'post-emoji' );
 
 		return $columns;
 	}
