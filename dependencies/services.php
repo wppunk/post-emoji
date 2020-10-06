@@ -29,7 +29,7 @@ return function ( ContainerConfigurator $configurator ) {
 		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );
 	$services
 		->set( 'admin', 'Emoji\Admin' )
-		->args( [ new Reference( 'emoji' ) ] );
+		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );
 	$services
 		->set( 'shortcode', 'Emoji\Shortcode' )
 		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );

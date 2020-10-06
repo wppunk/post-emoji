@@ -33,43 +33,12 @@ class Settings {
 	}
 
 	/**
-	 * Init hooks
+	 * Get settings
 	 *
-	 * @since {VERSION}
+	 * @return array
 	 */
-	public function hooks() {
-		add_action( 'admin_menu', [ $this, 'add_menu' ] );
-		add_action( 'admin_init', [ $this, 'register_settings' ] );
-	}
-
-	/**
-	 * Register plugin settings.
-	 */
-	public function register_settings() {
-		register_setting( Plugin::SLUG, Plugin::SLUG );
-	}
-
-	/**
-	 * Add plugin page in WordPress menu.
-	 *
-	 * @since {VERSION}
-	 */
-	public function add_menu() {
-		if ( apply_filters( 'emoji_add_menu', true ) ) {
-			return;
-		}
-
-		add_menu_page(
-			'Emoji Settings',
-			'Emoji',
-			'manage_options',
-			Plugin::SLUG,
-			[
-				$this,
-				'page_options',
-			],
-			'dashicons-smiley'
-		);
+	public function get_settings() {
+		return $this->settings;
 	}
 
 	/**
@@ -97,24 +66,6 @@ class Settings {
 	 */
 	public function is_scripts_enabled() {
 		return empty( $this->settings['disable_scripts'] );
-	}
-
-	/**
-	 * Plugin page callback.
-	 *
-	 * @since {VERSION}
-	 */
-	public function page_options() {
-		$settings = $this->settings;
-		$query    = new \WP_Query(
-			[
-				'post_type'      => 'post',
-				'posts_per_page' => 1,
-			]
-		);
-		$post_id  = $query->have_posts() ? $query->posts[0]->ID : 0;
-
-		require_once plugin_dir_path( __DIR__ ) . 'templates/admin/settings.php';
 	}
 
 }

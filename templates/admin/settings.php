@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-
+<div class="wrap">
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 	<form action="options.php" method="POST">
@@ -55,7 +55,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</p>
 		<?php submit_button( esc_html__( 'Save', 'post-emoji' ) ); ?>
 	</form>
-<?php if ( $post_id ) { ?>
-	<h2>Preview</h2>
-	<?php echo do_shortcode( '[emoji post_id="' . absint( $post_id ) . '"]' ); ?>
-<?php } ?>
+	<?php if ( $post_id ) { ?>
+		<h2>Preview</h2>
+		<?php echo do_shortcode( '[emoji post_id="' . absint( $post_id ) . '"]' ); ?>
+	<?php } ?>
+</div>

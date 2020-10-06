@@ -8,7 +8,6 @@
 	margin-right: -1rem;
 	margin-top: 3rem;
 	box-sizing: border-box;
-	text-decoration: none;
 
 	&.disabled .emoji-emotion-icon {
 		filter: grayscale(1);
@@ -20,6 +19,8 @@
 		flex: 0 0 16.6667%;
 		margin: 0 0 1rem;
 		padding: 0 1rem;
+		box-sizing: border-box;
+		text-decoration: none;
 
 		&-icon {
 			background-repeat: no-repeat;

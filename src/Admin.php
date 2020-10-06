@@ -26,12 +26,21 @@ class Admin {
 	private $emoji;
 
 	/**
+	 * Settings
+	 *
+	 * @var \Emoji\Settings
+	 */
+	private $settings;
+
+	/**
 	 * Admin constructor.
 	 *
-	 * @param \Emoji\Emoji $emoji Emoji.
+	 * @param \Emoji\Emoji    $emoji    Emoji.
+	 * @param \Emoji\Settings $settings Settings.
 	 */
-	public function __construct( $emoji ) {
-		$this->emoji = $emoji;
+	public function __construct( $emoji, $settings ) {
+		$this->emoji    = $emoji;
+		$this->settings = $settings;
 	}
 
 	/**
@@ -41,6 +50,8 @@ class Admin {
 		add_filter( 'manage_post_posts_columns', [ $this, 'register_columns' ] );
 		add_action( 'manage_post_posts_custom_column', [ $this, 'manage_columns' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'styles' ] );
+		add_action( 'admin_menu', [ $this, 'add_menu' ] );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
 	}
 
 	/**
@@ -83,6 +94,54 @@ class Admin {
 		if ( 'emoji' === $column_name ) {
 			echo absint( array_sum( $this->emoji->get( get_the_ID() ) ) );
 		}
+	}
+
+	/**
+	 * Register plugin settings.
+	 */
+	public function register_settings() {
+		register_setting( Plugin::SLUG, Plugin::SLUG );
+	}
+
+	/**
+	 * Add plugin page in WordPress menu.
+	 *
+	 * @since {VERSION}
+	 */
+	public function add_menu() {
+		if ( ! apply_filters( 'emoji_add_menu', true ) ) {
+			return;
+		}
+
+		add_menu_page(
+			'Emoji Settings',
+			'Emoji',
+			'manage_options',
+			Plugin::SLUG,
+			[
+				$this,
+				'page_options',
+			],
+			'dashicons-smiley'
+		);
+	}
+
+	/**
+	 * Plugin page callback.
+	 *
+	 * @since {VERSION}
+	 */
+	public function page_options() {
+		$settings = $this->settings->get_settings();
+		$query    = new \WP_Query(
+			[
+				'post_type'      => 'post',
+				'posts_per_page' => 1,
+			]
+		);
+		$post_id  = $query->have_posts() ? $query->posts[0]->ID : 0;
+
+		require_once plugin_dir_path( __DIR__ ) . 'templates/admin/settings.php';
 	}
 
 }
