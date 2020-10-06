@@ -12,7 +12,7 @@ Plugin description in search plugin.
 
 == Description ==
 
-Plugin description on plugin page.
+Just add the shortcode [emoji] for your post and display a list of emoji. Your customers can easily vote for your posts.
 
 = Features =
 * Emojies for the posts
