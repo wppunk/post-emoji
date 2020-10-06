@@ -26,12 +26,21 @@ class Front {
 	private $emoji;
 
 	/**
+	 * Settings
+	 *
+	 * @var \Emoji\Settings
+	 */
+	private $settings;
+
+	/**
 	 * Front constructor.
 	 *
-	 * @param \Emoji\Emoji $emoji Emoji.
+	 * @param \Emoji\Emoji    $emoji    Emoji.
+	 * @param \Emoji\Settings $settings Settings.
 	 */
-	public function __construct( $emoji ) {
-		$this->emoji = $emoji;
+	public function __construct( $emoji, $settings ) {
+		$this->emoji    = $emoji;
+		$this->settings = $settings;
 	}
 
 	/**
@@ -40,6 +49,7 @@ class Front {
 	public function hooks() {
 		add_action( 'wp_enqueue_scripts', [ $this, 'styles' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'scripts' ] );
+		add_filter( 'the_content', [ $this, 'emoji_after_content' ] );
 		if ( wp_doing_ajax() ) {
 			add_action( 'wp_ajax_emotion', [ $this, 'ajax' ] );
 			add_action( 'wp_ajax_nopriv_emotion', [ $this, 'ajax' ] );
@@ -47,10 +57,21 @@ class Front {
 	}
 
 	/**
+	 * Add emoji after content.
+	 *
+	 * @param string $content Content.
+	 *
+	 * @return string
+	 */
+	public function emoji_after_content( $content ) {
+		return $this->settings->emoji_after_content() ? $content . do_shortcode( '[emoji]' ) : $content;
+	}
+
+	/**
 	 * Load styles
 	 */
 	public function styles() {
-		if ( ! is_single() || (bool) apply_filters( 'emoji_skip_styles', false ) ) {
+		if ( ! is_single() || ! (bool) apply_filters( 'emoji_styles', $this->settings->is_styles_enabled() ) ) {
 			return;
 		}
 		wp_register_style(
@@ -66,7 +87,7 @@ class Front {
 	 * Load scripts
 	 */
 	public function scripts() {
-		if ( ! is_single() || (bool) apply_filters( 'emoji_skip_scripts', false ) ) {
+		if ( ! is_single() || ! (bool) apply_filters( 'emoji_scripts', $this->settings->is_scripts_enabled() ) ) {
 			return;
 		}
 		wp_register_script(

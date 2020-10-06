@@ -20,16 +20,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 return function ( ContainerConfigurator $configurator ) {
 	$services = $configurator->services();
 	$services->set( 'db', 'Emoji\DB' );
+	$services->set( 'settings', 'Emoji\Settings' );
 	$services
 		->set( 'emoji', 'Emoji\Emoji' )
 		->args( [ new Reference( 'db' ) ] );
 	$services
 		->set( 'front', 'Emoji\Front' )
-		->args( [ new Reference( 'emoji' ) ] );
+		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );
 	$services
 		->set( 'admin', 'Emoji\Admin' )
 		->args( [ new Reference( 'emoji' ) ] );
 	$services
 		->set( 'shortcode', 'Emoji\Shortcode' )
-		->args( [ new Reference( 'emoji' ) ] );
+		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );
 };
