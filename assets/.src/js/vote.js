@@ -13,33 +13,36 @@ export class Vote {
 	 * @since 1.0.0
 	 */
 	constructor( emotion ) {
-		const emojiContainer = document.getElementsByClassName( 'emoji-container' )[ 0 ],
-			active = emojiContainer.getElementsByClassName( 'active' );
+		const emojiContainers = document.querySelectorAll( '.emoji-container' ),
+			active = document.querySelectorAll( '.emoji-container .active' );
 
-		if ( emojiContainer.classList.contains( 'disabled' ) ) {
+		if ( emojiContainers[ 0 ].classList.contains( 'disabled' ) ) {
 			return;
 		}
 
 		if ( 'poop' === emotion ) {
-			this.farting( emojiContainer );
+			this.farting( emojiContainers[ 0 ]);
 			return;
 		}
 
-		if ( active.length ) {
-			active[ 0 ].classList.remove( 'active' );
-		}
-		emojiContainer.classList.add( 'disabled' );
+		active.forEach( ( el ) => {
+			el.classList.remove( 'active' );
+		});
 
-		this.sendAjax( emojiContainer, emotion );
+		emojiContainers.forEach( ( el ) => {
+			el.classList.add( 'disabled' );
+		});
+
+		this.sendAjax( emojiContainers, emotion );
 	}
 
 	/**
 	 * Send AJAX
 	 *
-	 * @param emojiContainer
+	 * @param emojiContainers
 	 * @param emotion
 	 */
-	sendAjax( emojiContainer, emotion ) {
+	sendAjax( emojiContainers, emotion ) {
 		if ( 'undefined' === emoji ) {
 			return;
 		}
@@ -49,7 +52,7 @@ export class Vote {
 			if ( 4 !== this.readyState || 200 !== this.status ) {
 				return;
 			}
-			vote.ajaxSuccess( emojiContainer, JSON.parse( xhttp.responseText ) );
+			vote.ajaxSuccess( emojiContainers, JSON.parse( xhttp.responseText ) );
 		};
 		xhttp.open( 'POST', emoji.url, true );
 		xhttp.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded;' );
@@ -59,19 +62,25 @@ export class Vote {
 	/**
 	 * Ajax success handler
 	 *
-	 * @param emojiContainer
+	 * @param emojiContainers
 	 * @param response
 	 */
-	ajaxSuccess( emojiContainer, response ) {
+	ajaxSuccess( emojiContainers, response ) {
 		if ( response.data.active ) {
-			emojiContainer.querySelectorAll( '.emoji-emotion[data-type=' + response.data.active + ']' )[ 0 ].classList.add( 'active' );
+			emojiContainers.forEach( ( el ) => {
+				el.querySelector( '.emoji-emotion[data-type=' + response.data.active + ']' ).classList.add( 'active' );
+			});
 		}
 		if ( response.data.emoji ) {
 			for ( let [ emotion, score ] of Object.entries( response.data.emoji ) ) {
-				emojiContainer.querySelectorAll( '.emoji-emotion[data-type=' + emotion + '] .emoji-emotion-label' )[ 0 ].textContent = score.toString();
+				emojiContainers.forEach( ( el ) => {
+					el.querySelectorAll( '.emoji-emotion[data-type=' + emotion + '] .emoji-emotion-label' )[ 0 ].textContent = score.toString();
+				});
 			}
 		}
-		emojiContainer.classList.remove( 'disabled' );
+		emojiContainers.forEach( ( el ) => {
+			el.classList.remove( 'disabled' );
+		});
 	}
 
 	/**
@@ -86,7 +95,7 @@ export class Vote {
 		poop.classList.add( 'active' );
 		poopCounter.textContent = 1;
 
-		new Audio( '/wp-content/plugins/emoji/assets/build/audio/farting-' + audio + '.mp3' ).play();
+		new Audio( emoji.audio_dir + 'farting-' + audio + '.mp3' ).play();
 		setTimeout( function() {
 			poop.classList.remove( 'active' );
 			poopCounter.textContent = 0;
