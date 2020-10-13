@@ -59,14 +59,14 @@ class Shortcode {
 	 */
 	public function view( $attr ) {
 		$post_id      = $this->get_shortcode_post_id( $attr );
-		$emoji        = apply_filters( 'emoji_view_list', $this->emoji->get( $post_id ) );
+		$emoji        = $this->emoji->get( $post_id );
 		$user_emotion = $this->emoji->user_emotion( $post_id );
 
-		if ( (bool) apply_filters( 'emoji_styles', $this->settings->is_styles_enabled() ) ) {
+		if ( (bool) apply_filters( 'emoji_styles', $this->settings->is_styles_enabled(), $post_id, $emoji ) ) {
 			wp_enqueue_style( Plugin::SLUG );
 			do_action( 'emoji_styles_loaded' );
 		}
-		if ( (bool) apply_filters( 'emoji_scripts', $this->settings->is_scripts_enabled() ) ) {
+		if ( (bool) apply_filters( 'emoji_scripts', $this->settings->is_scripts_enabled(), $post_id, $emoji ) ) {
 			wp_enqueue_script( Plugin::SLUG );
 			do_action( 'emoji_scripts_loaded' );
 		}
