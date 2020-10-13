@@ -7,6 +7,7 @@
 
 use Emoji\DB;
 use Emoji\Emoji;
+use Emoji\UserUuid;
 
 
 /**
@@ -49,7 +50,7 @@ function get_emoji_count( $post_id = 0 ) {
 	$post_id = empty( $post_id ) ? get_the_ID() : $post_id;
 
 	return array_sum(
-		( new Emoji( new DB() ) )->get( absint( $post_id ) )
+		( new Emoji( new DB(), new UserUuid() ) )->get( absint( $post_id ) )
 	);
 }
 

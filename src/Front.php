@@ -33,14 +33,23 @@ class Front {
 	private $settings;
 
 	/**
+	 * Lock
+	 *
+	 * @var \Emoji\Lock
+	 */
+	private $lock;
+
+	/**
 	 * Front constructor.
 	 *
 	 * @param \Emoji\Emoji    $emoji    Emoji.
 	 * @param \Emoji\Settings $settings Settings.
+	 * @param \Emoji\Lock     $lock     Lock.
 	 */
-	public function __construct( $emoji, $settings ) {
+	public function __construct( $emoji, $settings, $lock ) {
 		$this->emoji    = $emoji;
 		$this->settings = $settings;
+		$this->lock     = $lock;
 	}
 
 	/**
@@ -71,7 +80,7 @@ class Front {
 	 * Load styles
 	 */
 	public function styles() {
-		if ( ! is_single() || ! (bool) apply_filters( 'emoji_styles', $this->settings->is_styles_enabled() ) ) {
+		if ( ! is_single() ) {
 			return;
 		}
 		wp_register_style(
@@ -87,7 +96,7 @@ class Front {
 	 * Load scripts
 	 */
 	public function scripts() {
-		if ( ! is_single() || ! (bool) apply_filters( 'emoji_scripts', $this->settings->is_scripts_enabled() ) ) {
+		if ( ! is_single() ) {
 			return;
 		}
 		wp_register_script(
@@ -103,9 +112,10 @@ class Front {
 			(array) apply_filters(
 				'emoji_localize_arguments',
 				[
-					'nonce'   => wp_create_nonce( Plugin::SLUG ),
-					'url'     => admin_url( 'admin-ajax.php' ),
-					'post_id' => get_the_ID(),
+					'nonce'     => wp_create_nonce( Plugin::SLUG ),
+					'url'       => admin_url( 'admin-ajax.php' ),
+					'post_id'   => get_the_ID(),
+					'audio_dir' => EMOJI_URL . 'assets/build/audio/',
 				]
 			)
 		);
@@ -122,20 +132,25 @@ class Front {
 		if ( ! $post_id || ! $user_emotion ) {
 			wp_send_json_error();
 		}
-		$previous_user_emotion = $this->emoji->user_emotion( $post_id );
-		$this->emoji->vote( $post_id, $user_emotion, $previous_user_emotion );
-		$response['emoji'] = $this->emoji->get( $post_id );
-		if ( $user_emotion !== $previous_user_emotion ) {
-			$response['active'] = $user_emotion;
+		if ( $this->lock->is_locked( $post_id ) ) {
+			wp_send_json_error();
 		}
-		wp_send_json_success(
-			(array) apply_filters(
-				'emoji_ajax_response',
-				$response,
-				$user_emotion,
-				$post_id
-			)
+
+		$this->lock->lock( $post_id );
+
+		$response = (array) apply_filters(
+			'emoji_ajax_response',
+			[
+				'active' => $this->emoji->vote( $post_id, $user_emotion ) ? $user_emotion : false,
+				'emoji'  => $this->emoji->get( $post_id ),
+			],
+			$user_emotion,
+			$post_id
 		);
+
+		$this->lock->unlock( $post_id );
+
+		wp_send_json_success( $response );
 	}
 
 }
