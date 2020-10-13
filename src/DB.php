@@ -50,21 +50,12 @@ class DB {
 
 		$sql = 'CREATE TABLE ' . self::get_emoji_table() . ' (
 			`post_id` INT NOT NULL UNIQUE,
-			`cool` INT UNSIGNED,
-			`happy` INT UNSIGNED,
-			`good` INT UNSIGNED,
-			`nerd` INT UNSIGNED,
-			`sad` INT UNSIGNED
+			`emotion` VARCHAR(30) NOT NULL,
+			`hash` VARCHAR(64) UNIQUE,
+			`date_time` DATETIME DEFAULT CURRENT_TIMESTAMP
 		) ' . $wpdb->get_charset_collate();
 
 		maybe_create_table( self::get_emoji_table(), $sql );
-
-		$sql = 'CREATE TABLE ' . self::get_vote_table() . ' (
-			`hash` VARCHAR(64) UNIQUE,
-			`emotion` VARCHAR(5) NOT NULL
-		) ' . $wpdb->get_charset_collate();
-
-		maybe_create_table( self::get_vote_table(), $sql );
 	}
 
 	/**
@@ -79,33 +70,43 @@ class DB {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
-		return (array) $wpdb->get_row(
+		$emoji = (array) $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT cool, happy, good, nerd, sad FROM ' . esc_sql( self::get_emoji_table() ) . ' WHERE post_id = %d',
+				'SELECT `emotion`, COUNT( `emotion` ) as count FROM ' . esc_sql( self::get_emoji_table() ) . ' WHERE `post_id` = %d GROUP BY `emotion`',
 				absint( $post_id )
 			),
 			ARRAY_A
 		);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
+		if ( empty( $emoji ) ) {
+			return [];
+		}
+
+		$emoji = wp_list_pluck( $emoji, 'count', 'emotion' );
+		$emoji = array_map( 'absint', $emoji );
+
+		return $emoji;
 	}
 
 	/**
 	 * Get user emotion.
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int    $post_id Post ID.
+	 * @param string $hash    Hash.
 	 *
 	 * @return string
 	 */
-	public function get_user_emotion( $post_id ) {
+	public function get_user_emotion( $post_id, $hash ) {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 		return (string) $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT emotion FROM ' . esc_sql( self::get_vote_table() ) . ' WHERE hash = %s LIMIT 1',
-				$post_id
+				'SELECT emotion FROM ' . esc_sql( self::get_emoji_table() ) . ' WHERE post_id = %d AND hash = %s LIMIT 1',
+				$post_id,
+				$hash
 			)
 		);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -113,74 +114,47 @@ class DB {
 	}
 
 	/**
-	 * Update emoji.
-	 *
-	 * @param int    $post_id               Post ID.
-	 * @param string $user_emotion          User emotion.
-	 * @param string $previous_user_emotion Previous user emotion.
-	 */
-	public function update_emoji( $post_id, $user_emotion, $previous_user_emotion ) {
-		global $wpdb;
-
-		$multiple = $previous_user_emotion !== $user_emotion ? 1 : - 1;
-
-		$sql = $wpdb->prepare(
-			'INSERT INTO ' . esc_sql( self::get_emoji_table() )
-			. '(`post_id`, `cool`, `happy`, `good`, `nerd`, `sad`) VALUES( %d, %d, %d, %d, %d, %d )
-			ON DUPLICATE KEY UPDATE post_id=%d,' . esc_sql( $user_emotion ) . '=' . esc_sql( $user_emotion ) . ' + %d',
-			absint( $post_id ),
-			absint( 'cool' === $user_emotion ),
-			absint( 'happy' === $user_emotion ),
-			absint( 'good' === $user_emotion ),
-			absint( 'nerd' === $user_emotion ),
-			absint( 'sad' === $user_emotion ),
-			absint( $post_id ),
-			$multiple
-		);
-		if ( $previous_user_emotion && 1 === $multiple ) {
-			$sql .= ', ' . $previous_user_emotion . '=' . $previous_user_emotion . '-1';
-		}
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-		$wpdb->query( $sql );
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
-		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
-	}
-
-	/**
 	 * Update user emotion
 	 *
-	 * @param string $hash                  Hash.
-	 * @param string $user_emotion          Current user emotion.
-	 * @param string $previous_user_emotion User emotion.
+	 * @param int    $post_id      Current post ID.
+	 * @param string $hash         Hash.
+	 * @param string $user_emotion Current user emotion.
+	 *
+	 * @return bool
 	 */
-	public function update_user_emotion( $hash, $user_emotion, $previous_user_emotion ) {
+	public function update_user_emotion( $post_id, $hash, $user_emotion ) {
 		global $wpdb;
-		if ( $previous_user_emotion === $user_emotion ) {
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
-			$wpdb->delete(
-				self::get_vote_table(),
-				[ 'hash' => $hash ]
-			);
-			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
-			// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
-			return;
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		$deleted = $wpdb->delete(
+			self::get_emoji_table(),
+			[
+				'post_id' => $post_id,
+				'emotion' => $user_emotion,
+				'hash'    => $hash,
+			]
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
+		if ( ! empty( $deleted ) ) {
+			return false;
 		}
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->replace(
-			self::get_vote_table(),
+		return (bool) $wpdb->replace(
+			self::get_emoji_table(),
 			[
-				'hash'    => $hash,
-				'emotion' => $user_emotion,
+				'post_id'   => $post_id,
+				'emotion'   => $user_emotion,
+				'hash'      => $hash,
+				'date_time' => null,
 			],
 			[
+				'%d',
 				'%s',
 				'%s',
+				null,
 			]
 		);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
