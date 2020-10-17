@@ -6,11 +6,10 @@ if ( ! Encore.isRuntimeEnvironmentConfigured() ) {
 
 Encore.setOutputPath( 'assets/build' )
 	.setPublicPath( '/' )
-	.addEntry( 'js/main', './assets/.src/js/main.js' )
-	.addStyleEntry(
-		'css/main',
-		'./assets/.src/scss/main.scss'
-	)
+	.addEntry( 'js/main', './assets/.src/js/front/main.js' )
+	.addEntry( 'js/admin', './assets/.src/js/admin/main.js' )
+	.addStyleEntry( 'css/main', './assets/.src/scss/main.scss' )
+	.addStyleEntry( 'css/admin', './assets/.src/scss/admin.scss' )
 	.splitEntryChunks()
 	.disableSingleRuntimeChunk()
 	.cleanupOutputBeforeBuild()

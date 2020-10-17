@@ -1,0 +1,74 @@
+.emoji-repeater {
+	&-wrapper {
+		max-width: 350px;
+	}
+
+	&-row {
+		display: flex;
+		margin-left: -10px;
+		margin-right: -10px;
+		align-items: center;
+		transition: background-color, border-color .3s ease;
+
+		&.ui-sortable-handle {
+			cursor: move;
+		}
+
+		&.ui-sortable-helper {
+			background-color: #fff;
+			border: 1px dashed #ccd0d4;
+		}
+
+		&.ui-sortable-placeholder {
+			visibility: visible !important;
+		}
+
+		& + .emoji-repeater-row {
+			border-top: 1px solid #ccd0d4;
+		}
+	}
+
+	&-item {
+		padding: 15px 10px;
+
+		&:last-child {
+			width: 100%;
+		}
+
+		label,
+		input {
+			display: block;
+			width: 100%;
+		}
+
+		&-preview {
+			width: 80px;
+			height: 80px;
+			background-color: #fff;
+			background-size: 60px;
+			background-position: center center;
+			background-repeat: no-repeat;
+		}
+
+		&-remove.button {
+			width: 30px;
+			height: 30px;
+			padding: 5px 0;
+			line-height: 30px;
+			text-align: center;
+		}
+
+		&-add {
+			&.button {
+				text-align: center;
+				display: block;
+				width: 100%;
+			}
+
+			.dashicons {
+				line-height: 30px;
+				margin-right: 5px;
+			}
+		}
+	}
+}

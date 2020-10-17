@@ -24,14 +24,11 @@ return function ( ContainerConfigurator $configurator ) {
 	$services->set( 'user_uuid', 'Emoji\UserUuid' );
 
 	$services
-		->set( 'lock', 'Emoji\Lock' )
-		->args( [ new Reference( 'user_uuid' ) ] );
-	$services
 		->set( 'emoji', 'Emoji\Emoji' )
-		->args( [ new Reference( 'db' ), new Reference( 'user_uuid' ) ] );
+		->args( [ new Reference( 'db' ), new Reference( 'user_uuid' ), new Reference( 'settings' ) ] );
 	$services
 		->set( 'front', 'Emoji\Front' )
-		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ), new Reference( 'lock' ) ] );
+		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );
 	$services
 		->set( 'admin', 'Emoji\Admin' )
 		->args( [ new Reference( 'emoji' ), new Reference( 'settings' ) ] );

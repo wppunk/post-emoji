@@ -18,10 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="emoji-container">
 	<?php
 	do_action( 'emoji_before_emoji', $emoji, $user_emotion );
-	foreach ( $emoji as $emotion => $score ) {
-		do_action( "emoji_before_{$emotion}_emotion", $emoji, $score );
+	foreach ( $emoji as $name => $emotion ) {
+		do_action( "emoji_before_{$name}_emotion", $emoji, $emotion );
 		require plugin_dir_path( __FILE__ ) . 'emotion.php';
-		do_action( "emoji_after_{$emotion}_emotion", $emoji, $score );
+		do_action( "emoji_after_{$name}_emotion", $emoji, $emotion );
 	}
 	do_action( 'emoji_after_emoji', $emoji, $user_emotion );
 	?>

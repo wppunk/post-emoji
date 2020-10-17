@@ -33,36 +33,29 @@ class Front {
 	private $settings;
 
 	/**
-	 * Lock
-	 *
-	 * @var \Emoji\Lock
-	 */
-	private $lock;
-
-	/**
 	 * Front constructor.
 	 *
 	 * @param \Emoji\Emoji    $emoji    Emoji.
 	 * @param \Emoji\Settings $settings Settings.
-	 * @param \Emoji\Lock     $lock     Lock.
 	 */
-	public function __construct( $emoji, $settings, $lock ) {
+	public function __construct( $emoji, $settings ) {
 		$this->emoji    = $emoji;
 		$this->settings = $settings;
-		$this->lock     = $lock;
 	}
 
 	/**
 	 * Load hooks
 	 */
 	public function hooks() {
-		add_action( 'wp_enqueue_scripts', [ $this, 'styles' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'scripts' ] );
-		add_filter( 'the_content', [ $this, 'emoji_after_content' ] );
 		if ( wp_doing_ajax() ) {
 			add_action( 'wp_ajax_emotion', [ $this, 'ajax' ] );
 			add_action( 'wp_ajax_nopriv_emotion', [ $this, 'ajax' ] );
+
+			return;
 		}
+		add_action( 'wp_enqueue_scripts', [ $this, 'styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'scripts' ] );
+		add_filter( 'the_content', [ $this, 'emoji_after_content' ] );
 	}
 
 	/**
@@ -85,7 +78,7 @@ class Front {
 		}
 		wp_register_style(
 			Plugin::SLUG,
-			plugin_dir_url( __DIR__ ) . '/assets/build/css/main.css',
+			plugin_dir_url( __DIR__ ) . 'assets/build/css/main.css',
 			[],
 			Plugin::VERSION
 		);
@@ -130,13 +123,10 @@ class Front {
 		$post_id      = filter_input( INPUT_POST, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 		$user_emotion = filter_input( INPUT_POST, 'emotion', FILTER_SANITIZE_STRING );
 		if ( ! $post_id || ! $user_emotion ) {
-			wp_send_json_error();
-		}
-		if ( $this->lock->is_locked( $post_id ) ) {
-			wp_send_json_error();
-		}
+			wp_send_json_error( null, 400 );
 
-		$this->lock->lock( $post_id );
+			return;
+		}
 
 		$response = (array) apply_filters(
 			'emoji_ajax_response',
@@ -147,8 +137,6 @@ class Front {
 			$user_emotion,
 			$post_id
 		);
-
-		$this->lock->unlock( $post_id );
 
 		wp_send_json_success( $response );
 	}

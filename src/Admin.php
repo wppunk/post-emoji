@@ -50,6 +50,7 @@ class Admin {
 		add_filter( 'manage_post_posts_columns', [ $this, 'register_columns' ] );
 		add_action( 'manage_post_posts_custom_column', [ $this, 'manage_columns' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'scripts' ] );
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 	}
@@ -63,6 +64,12 @@ class Admin {
 			return;
 		}
 
+		wp_enqueue_style(
+			Plugin::SLUG . '-admin',
+			plugin_dir_url( __DIR__ ) . '/assets/build/css/admin.css',
+			[],
+			Plugin::VERSION
+		);
 		wp_register_style(
 			Plugin::SLUG,
 			plugin_dir_url( __DIR__ ) . '/assets/build/css/main.css',
@@ -70,6 +77,25 @@ class Admin {
 			Plugin::VERSION
 		);
 		do_action( 'emoji_styles_registered' );
+	}
+
+	/**
+	 * Register scripts.
+	 */
+	public function scripts() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'toplevel_page_emoji' !== $screen->base ) {
+			return;
+		}
+
+		wp_enqueue_media();
+		wp_enqueue_script(
+			Plugin::SLUG . '-admin',
+			plugin_dir_url( __DIR__ ) . '/assets/build/js/admin.js',
+			[ 'jquery', 'jquery-ui-sortable' ],
+			Plugin::VERSION,
+			true
+		);
 	}
 
 	/**
@@ -114,8 +140,8 @@ class Admin {
 		}
 
 		add_menu_page(
-			'Emoji Settings',
-			'Emoji',
+			esc_html__( 'Emoji Settings', 'post-emoji' ),
+			esc_html__( 'Emoji', 'post-emoji' ),
 			'manage_options',
 			Plugin::SLUG,
 			[
@@ -140,6 +166,7 @@ class Admin {
 			]
 		);
 		$post_id  = $query->have_posts() ? $query->posts[0]->ID : 0;
+		$emoji    = $this->settings->get_emoji();
 
 		require_once plugin_dir_path( __DIR__ ) . 'templates/admin/settings.php';
 	}

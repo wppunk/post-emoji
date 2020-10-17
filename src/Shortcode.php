@@ -58,21 +58,23 @@ class Shortcode {
 	 * @return string
 	 */
 	public function view( $attr ) {
-		$post_id      = $this->get_shortcode_post_id( $attr );
-		$emoji        = $this->emoji->get( $post_id );
-		$user_emotion = $this->emoji->user_emotion( $post_id );
+		$post_id       = $this->get_shortcode_post_id( $attr );
+		$emoji         = $this->emoji->get( $post_id );
+		$user_emotion  = $this->emoji->user_emotion( $post_id );
+		$template_path = plugin_dir_path( __DIR__ ) . 'templates/shortcode.php';
 
 		if ( (bool) apply_filters( 'emoji_styles', $this->settings->is_styles_enabled(), $post_id, $emoji ) ) {
 			wp_enqueue_style( Plugin::SLUG );
-			do_action( 'emoji_styles_loaded' );
+			do_action( 'emoji_styles_loaded', $post_id, $attr, $emoji );
 		}
 		if ( (bool) apply_filters( 'emoji_scripts', $this->settings->is_scripts_enabled(), $post_id, $emoji ) ) {
 			wp_enqueue_script( Plugin::SLUG );
-			do_action( 'emoji_scripts_loaded' );
+			do_action( 'emoji_scripts_loaded', $post_id, $attr, $emoji );
 		}
 
+		$template_path = (string) apply_filters( 'emoji_shortcode_template', $template_path, $post_id, $attr, $emoji );
 		ob_start();
-		require plugin_dir_path( __DIR__ ) . 'templates/shortcode.php';
+		require $template_path;
 
 		return ob_get_clean();
 	}

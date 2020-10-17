@@ -12,6 +12,7 @@ params:
     - env
     - .codeception/_config/params.php
 settings:
+    shuffle: true
     backup_globals: false
     colors: true
 coverage:

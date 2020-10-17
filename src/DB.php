@@ -104,7 +104,7 @@ class DB {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 		return (string) $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT emotion FROM ' . esc_sql( self::get_emoji_table() ) . ' WHERE post_id = %d AND hash = %s LIMIT 1',
+				'SELECT `emotion` FROM ' . esc_sql( self::get_emoji_table() ) . ' WHERE `post_id` = %d AND `hash` = %s LIMIT 1',
 				$post_id,
 				$hash
 			)

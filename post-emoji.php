@@ -92,6 +92,8 @@ function run_emoji_plugin() {
 
 	$emoji = new Plugin( $container_builder );
 	$emoji->run();
+	// You can get any object using this hook. Just use the $emoji->get_service( 'service' ).
+	// List of services you can see in the dependencies/services.php file.
 	do_action( 'emoji_init', $emoji );
 }
 

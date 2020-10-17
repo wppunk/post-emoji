@@ -13,6 +13,8 @@ namespace EmojiTests;
 
 use Mockery;
 
+use tad\FunctionMocker\FunctionMocker;
+
 use function Brain\Monkey\setUp;
 use function Brain\Monkey\tearDown;
 
@@ -31,6 +33,7 @@ abstract class TestCase extends \Codeception\PHPUnit\TestCase {
 	 * @since   1.0.0
 	 */
 	protected function setUp(): void {
+		FunctionMocker::setUp();
 		parent::setUp();
 		setUp();
 	}
@@ -44,6 +47,7 @@ abstract class TestCase extends \Codeception\PHPUnit\TestCase {
 		tearDown();
 		Mockery::close();
 		parent::tearDown();
+		FunctionMocker::tearDown();
 	}
 
 }

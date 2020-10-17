@@ -33,14 +33,23 @@ class Emoji {
 	private $db;
 
 	/**
+	 * Settings
+	 *
+	 * @var \Emoji\Settings
+	 */
+	private $settings;
+
+	/**
 	 * Emoji constructor.
 	 *
 	 * @param \Emoji\DB       $db        DB.
 	 * @param \Emoji\UserUuid $user_uuid User uuid.
+	 * @param \Emoji\Settings $settings  Settings.
 	 */
-	public function __construct( $db, $user_uuid ) {
+	public function __construct( $db, $user_uuid, $settings ) {
 		$this->db        = $db;
 		$this->user_uuid = $user_uuid;
+		$this->settings  = $settings;
 	}
 
 	/**
@@ -56,21 +65,11 @@ class Emoji {
 			return $emoji;
 		}
 
-		$allowed_emoji = apply_filters(
-			'emoji_view_list',
-			[
-				'cool'  => 0,
-				'happy' => 0,
-				'good'  => 0,
-				'nerd'  => 0,
-				'sad'   => 0,
-				'poop'  => 0,
-			]
-		);
+		$allowed_emoji = $this->settings->get_emoji();
 		$emoji         = $this->db->get_emoji( $post_id );
 
 		foreach ( $allowed_emoji as $key => $emotion ) {
-			$allowed_emoji[ $key ] = ! empty( $emoji[ $key ] ) ? $emoji[ $key ] : $emotion;
+			$allowed_emoji[ $key ]['score'] = ! empty( $emoji[ $key ] ) ? $emoji[ $key ] : 0;
 		}
 		wp_cache_set( 'emoji_' . $post_id, $allowed_emoji );
 
