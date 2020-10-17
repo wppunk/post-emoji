@@ -1,12 +1,12 @@
 const media = wp.media( {
 	title: 'Insert image',
 	library: {
-		type: 'image',
+		type: 'image'
 	},
 	button: {
-		text: 'Use this image', // button label text
+		text: 'Use this image' // button label text
 	},
-	multiple: false,
+	multiple: false
 } );
 let currentItem;
 

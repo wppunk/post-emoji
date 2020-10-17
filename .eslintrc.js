@@ -11,6 +11,7 @@ module.exports = {
 		'sourceType': 'module'
 	},
 	rules: {
+		'space-in-parens': 0,
 		'complexity': [
 			'warn',
 			{

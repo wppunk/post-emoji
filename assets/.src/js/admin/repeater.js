@@ -31,7 +31,7 @@ export class Repeater {
 	initSortable() {
 		this.$repeaterElement.sortable( {
 			axis: 'y',
-			stop: this.bindChangeIndexes,
+			stop: this.bindChangeIndexes
 		} );
 	}
 
@@ -44,7 +44,7 @@ export class Repeater {
 	}
 
 	static changeItemIndexes( $this ) {
-		const index = + $this.index();
+		const index = +$this.index();
 		$this.find( 'input' ).each( function() {
 			jQuery( this ).prop( 'name', Repeater.changeIndex( jQuery( this ).prop( 'name' ), index ) );
 		} );
@@ -87,7 +87,7 @@ export class Repeater {
 		clone.find( 'input' ).each( function() {
 			jQuery( this ).prop(
 				'name',
-				Repeater.changeIndex( jQuery( this ).prop( 'name' ), + last.index() + 1 ),
+				Repeater.changeIndex( jQuery( this ).prop( 'name' ), +last.index() + 1 )
 			);
 		} );
 
