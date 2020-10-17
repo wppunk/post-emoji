@@ -14,7 +14,7 @@ use tad\FunctionMocker\FunctionMocker;
 
 define( 'EMOJI_DEBUG', true );
 define( 'EMOJI_PATH', realpath( __DIR__ . '/../../../' ) . '/' );
-define( 'ABSPATH', realpath( EMOJI_PATH . '../../../' ) . '/' );
+define( 'ABSPATH', EMOJI_PATH . 'wordpress/' );
 define( 'EMOJI_URL', 'https://site.com/wp-content/plugins/emoji/' );
 
 Load::load();
