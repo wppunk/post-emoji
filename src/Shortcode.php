@@ -89,8 +89,11 @@ class Shortcode {
 	private function get_shortcode_post_id( $attr ) {
 		global $post;
 		$post_id = ! empty( $attr['post_id'] ) ? absint( $attr['post_id'] ) : 0;
+		if ( $post_id ) {
+			return $post_id;
+		}
 
-		return ! empty( $post_id ) ? $post_id : absint( $post->ID );
+		return $post ? absint( $post->ID ) : 0;
 	}
 
 }
