@@ -5,7 +5,7 @@
  * @wordpress-plugin
  * Plugin Name:         Post emoji
  * Description:         The plugin adds information about the games to the site posts.
- * Version:             1.0.0
+ * Version:             1.0.1
  * Author:              WP Punk
  * Author URI:          https://profiles.wordpress.org/wppunk/
  * Text Domain:         post-emoji
