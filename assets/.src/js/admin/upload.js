@@ -1,4 +1,4 @@
-const media = wp.media( {
+const media = wp.media({
 	title: 'Insert image',
 	library: {
 		type: 'image'
@@ -7,7 +7,7 @@ const media = wp.media( {
 		text: 'Use this image' // button label text
 	},
 	multiple: false
-} );
+});
 let currentItem;
 
 /**

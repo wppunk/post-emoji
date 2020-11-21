@@ -122,7 +122,7 @@ class Front {
 		check_ajax_referer( Plugin::SLUG, 'nonce' );
 		$post_id      = filter_input( INPUT_POST, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 		$user_emotion = filter_input( INPUT_POST, 'emotion', FILTER_SANITIZE_STRING );
-		if ( ! $post_id || ! $user_emotion ) {
+		if ( ! $post_id ) {
 			wp_send_json_error( null, 400 );
 
 			return;
@@ -131,7 +131,7 @@ class Front {
 		$response = (array) apply_filters(
 			'emoji_ajax_response',
 			[
-				'active' => $this->emoji->vote( $post_id, $user_emotion ) ? $user_emotion : false,
+				'active' => $user_emotion ? $this->emoji->vote( $post_id, $user_emotion ) : $this->emoji->user_emotion( $post_id ),
 				'emoji'  => $this->emoji->get( $post_id ),
 			],
 			$user_emotion,

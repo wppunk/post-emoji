@@ -43,9 +43,6 @@ export class Vote {
 	 * @param emotion
 	 */
 	sendAjax( emojiContainers, emotion ) {
-		if ( 'undefined' === emoji ) {
-			return;
-		}
 		const vote = this,
 			xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
@@ -72,9 +69,9 @@ export class Vote {
 			});
 		}
 		if ( response.data.emoji ) {
-			for ( let [ emotion, score ] of Object.entries( response.data.emoji ) ) {
+			for ( let [ emotion, data ] of Object.entries( response.data.emoji ) ) {
 				emojiContainers.forEach( ( el ) => {
-					el.querySelectorAll( '.emoji-emotion[data-type=' + emotion + '] .emoji-emotion-label' )[ 0 ].textContent = score.toString();
+					el.querySelectorAll( '.emoji-emotion[data-type=' + emotion + '] .emoji-emotion-label' )[ 0 ].textContent = data.score.toString();
 				});
 			}
 		}

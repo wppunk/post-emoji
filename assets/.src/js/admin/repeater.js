@@ -29,10 +29,10 @@ export class Repeater {
 	}
 
 	initSortable() {
-		this.$repeaterElement.sortable( {
+		this.$repeaterElement.sortable({
 			axis: 'y',
 			stop: this.bindChangeIndexes
-		} );
+		});
 	}
 
 	bindChangeIndexes() {
@@ -47,7 +47,7 @@ export class Repeater {
 		const index = +$this.index();
 		$this.find( 'input' ).each( function() {
 			jQuery( this ).prop( 'name', Repeater.changeIndex( jQuery( this ).prop( 'name' ), index ) );
-		} );
+		});
 
 		return $this;
 	}
@@ -72,7 +72,7 @@ export class Repeater {
 			400,
 			function() {
 				$element.remove();
-			} );
+			});
 	}
 
 	bindCloneItem( e ) {
@@ -89,7 +89,7 @@ export class Repeater {
 				'name',
 				Repeater.changeIndex( jQuery( this ).prop( 'name' ), +last.index() + 1 )
 			);
-		} );
+		});
 
 		jQuery( '.emoji-repeater' ).append( clone );
 		clone.slideDown();

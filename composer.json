@@ -56,12 +56,12 @@
 		"acceptance": "codecept run acceptance -c .codeception.yml",
 		"unit": "codecept run unit -c .codeception.yml",
 		"cs": "phpcs --standard=.phpcs.xml .",
-		"install-scoper": [
+		"scoper": [
 			"composer bin php-scoper config minimum-stability dev",
 			"composer bin php-scoper config prefer-stable true",
-			"composer bin php-scoper require --dev humbug/php-scoper"
+			"composer bin php-scoper require --dev humbug/php-scoper",
+			"php-scoper add-prefix --config .scoper.inc.php --output-dir dependencies/vendor/"
 		],
-		"scoper": "php-scoper add-prefix --config .scoper.inc.php --output-dir dependencies/vendor/",
 		"post-update-cmd": "php -r \"copy('vendor/automattic/wordbless/src/dbless-wpdb.php', 'wordpress/wp-content/db.php');\""
 	}
 }
