@@ -131,7 +131,7 @@ class Front {
 		$response = (array) apply_filters(
 			'emoji_ajax_response',
 			[
-				'active' => $user_emotion ? $this->emoji->vote( $post_id, $user_emotion ) : $this->emoji->user_emotion( $post_id ),
+				'active' => $user_emotion && $this->emoji->vote( $post_id, $user_emotion ) ? $user_emotion : $this->emoji->user_emotion( $post_id ),
 				'emoji'  => $this->emoji->get( $post_id ),
 			],
 			$user_emotion,

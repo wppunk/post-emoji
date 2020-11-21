@@ -5,7 +5,7 @@
  * @wordpress-plugin
  * Plugin Name:         Post emoji
  * Description:         The plugin adds information about the games to the site posts.
- * Version:             1.0.1
+ * Version:             1.0.3
  * Author:              WP Punk
  * Author URI:          https://profiles.wordpress.org/wppunk/
  * Text Domain:         post-emoji
@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Emoji\DB;
 use Emoji\Plugin;
 use Emoji\Vendor\Symfony\Component\Config\FileLocator;
 use Emoji\Vendor\Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -84,7 +85,7 @@ add_action( 'plugins_loaded', 'run_emoji_plugin' );
  * @throws \Exception Invalid service name.
  */
 function run_emoji_plugin() {
-	require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+	require_once EMOJI_PATH . 'vendor/autoload.php';
 
 	$container_builder = new ContainerBuilder();
 	$loader            = new PhpFileLoader( $container_builder, new FileLocator( __DIR__ ) );
@@ -97,4 +98,11 @@ function run_emoji_plugin() {
 	do_action( 'emoji_init', $emoji );
 }
 
-register_activation_hook( EMOJI_PATH . 'src/DB.php', [ 'Emoji\DB', 'create_table' ] );
+/**
+ * Activate plugin
+ */
+function emoji_activate_plugin() {
+	require_once EMOJI_PATH . 'vendor/autoload.php';
+	DB::create_tables();
+}
+register_activation_hook( __FILE__, 'emoji_activate_plugin' );
