@@ -49,7 +49,7 @@ class DB {
 		global $wpdb;
 
 		$sql = 'CREATE TABLE ' . self::get_emoji_table() . ' (
-			`post_id` INT NOT NULL UNIQUE,
+			`post_id` INT NOT NULL,
 			`emotion` VARCHAR(30) NOT NULL,
 			`hash` VARCHAR(64) UNIQUE,
 			`date_time` DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -87,6 +87,41 @@ class DB {
 		$emoji = array_map( 'absint', $emoji );
 
 		return $emoji;
+	}
+
+	/**
+	 * Get count of emoji for current post.
+	 *
+	 * @param int   $post_id Post ID.
+	 * @param array $emoji   List of emoji.
+	 *
+	 * @return int
+	 */
+	public function get_emoji_count( $post_id, $emoji ) {
+		global $wpdb;
+		$placeholder = array_fill( 0, count( $emoji ), '%s' );
+		foreach ( $emoji as &$emotion ) {
+			$emotion = sanitize_text_field( $emotion );
+		}
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT( `emotion` ) as count FROM ' . esc_sql( self::get_emoji_table() ) .
+				' WHERE `post_id` = %d
+				AND `emotion` IN (' . implode( ',', $placeholder ) . ')', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				array_merge(
+					[
+						absint( $post_id ),
+					],
+					$emoji
+				)
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		return absint( $count );
 	}
 
 	/**
@@ -145,16 +180,14 @@ class DB {
 		return (bool) $wpdb->replace(
 			self::get_emoji_table(),
 			[
-				'post_id'   => $post_id,
-				'emotion'   => $user_emotion,
-				'hash'      => $hash,
-				'date_time' => null,
+				'post_id' => $post_id,
+				'emotion' => $user_emotion,
+				'hash'    => $hash,
 			],
 			[
 				'%d',
 				'%s',
 				'%s',
-				null,
 			]
 		);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery

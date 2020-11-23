@@ -5,12 +5,6 @@
  * @package Emoji/Functions
  */
 
-use Emoji\DB;
-use Emoji\Emoji;
-use Emoji\UserUuid;
-use Emoji\Settings;
-
-
 /**
  * Get post emoji
  *
@@ -46,19 +40,21 @@ function the_emoji( $post_id = 0 ) {
  * @param int $post_id Post ID.
  *
  * @return int
+ *
+ * @throws Exception Invalid service name.
  */
 function get_emoji_count( $post_id = 0 ) {
 	$post_id = empty( $post_id ) ? get_the_ID() : $post_id;
 
-	return array_sum(
-		( new Emoji( new DB(), new UserUuid(), new Settings() ) )->get( absint( $post_id ) )
-	);
+	return emoji()->get( 'emoji' )->get_count( absint( $post_id ) );
 }
 
 /**
  * Print emoji count
  *
  * @param int $post_id Post ID.
+ *
+ * @throws Exception Invalid service name.
  */
 function the_emoji_count( $post_id = 0 ) {
 	$post_id = empty( $post_id ) ? get_the_ID() : $post_id;

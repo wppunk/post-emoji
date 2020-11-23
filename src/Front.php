@@ -66,6 +66,13 @@ class Front {
 	 * @return string
 	 */
 	public function emoji_after_content( $content ) {
+		if ( is_feed() ) {
+			return $content;
+		}
+		if ( ! is_singular( 'post' ) ) {
+			return $content;
+		}
+
 		return $this->settings->emoji_after_content() ? $content . do_shortcode( '[emoji]' ) : $content;
 	}
 
@@ -73,9 +80,6 @@ class Front {
 	 * Load styles
 	 */
 	public function styles() {
-		if ( ! is_single() ) {
-			return;
-		}
 		wp_register_style(
 			Plugin::SLUG,
 			plugin_dir_url( __DIR__ ) . 'assets/build/css/main.css',
@@ -89,9 +93,6 @@ class Front {
 	 * Load scripts
 	 */
 	public function scripts() {
-		if ( ! is_single() ) {
-			return;
-		}
 		wp_register_script(
 			Plugin::SLUG,
 			plugin_dir_url( __DIR__ ) . '/assets/build/js/main.js',

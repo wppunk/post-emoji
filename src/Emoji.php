@@ -77,6 +77,26 @@ class Emoji {
 	}
 
 	/**
+	 * Get count of emoji for current post.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return int
+	 */
+	public function get_count( $post_id ) {
+		$emoji_count = wp_cache_get( 'emoji_count_' . $post_id );
+		if ( $emoji_count ) {
+			return $emoji_count;
+		}
+
+		$allowed_emoji = $this->settings->get_emoji();
+		$emoji_count   = $this->db->get_emoji_count( $post_id, array_keys( $allowed_emoji ) );
+		wp_cache_set( 'emoji_count_' . $post_id, $emoji_count );
+
+		return $emoji_count;
+	}
+
+	/**
 	 * Get user emotion.
 	 *
 	 * @param int $post_id Post ID.

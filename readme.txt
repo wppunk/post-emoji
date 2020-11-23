@@ -15,7 +15,7 @@ Plugin description in search plugin.
 Just add the shortcode [emoji] for your post and display a list of emoji. Your customers can easily vote for your posts.
 
 = Features =
-* Emojies for the posts
+* Emoji for the posts
 
 == Installation ==
 
@@ -24,25 +24,17 @@ Just add the shortcode [emoji] for your post and display a list of emoji. Your c
 
 == Frequently Asked Questions ==
 
-= How to add emoji to the posts =
-In the `single.php` you can add the next code
-
+= How to add emoji to the posts via code =
 `
 if ( function_exists( 'the_emoji' ) ) {
 	the_emoji();
 }
 `
-
-Or in `functions.php`
+Or
 
 `
-add_filter( 'the_content', 'add_emoji_after_content' );
-function add_emoji_after_content( $content ) {
-	if ( ! function_exists( 'the_emoji' ) ) {
-		return $content;
-	}
-	return $content . get_emoji();
-}
+echo do_shortcode( '[emoji]' );
+echo do_shortcode( '[emoji post_id="15"]' );
 `
 
 = How to print emoji count in the loop =
@@ -54,6 +46,27 @@ if ( function_exists( 'the_emoji_count' ) {
 `
 
 == Changelog ==
+
+= 1.0.6 =
+* Removed unnecessary index
+* Added automatically filling the date column
+* Added `emoji` function that has given access to the DIC
+
+= 1.0.5 =
+* Fixed the_content filter
+
+= 1.0.4 =
+* Removed emoji from feeds
+* Minified assets
+
+= 1.0.3 =
+* Fixed first vote
+
+= 1.0.2 =
+* Added activation hook
+
+= 1.0.1 =
+* Initial release
 
 = 1.0.0 =
 * Initial release
